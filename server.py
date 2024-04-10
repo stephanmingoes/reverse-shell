@@ -1,11 +1,6 @@
 import socket
-
+from shared import server_ip, server_port
 def main():
-   
-    
-    server_ip = '127.0.0.1'
-    server_port = 8080
-
     # Create a socket object
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
